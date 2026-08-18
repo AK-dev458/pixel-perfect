@@ -32,7 +32,8 @@ function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string; form?: string }>({});
+  type LoginErrors = { email?: string | undefined; password?: string | undefined; form?: string | undefined };
+  const [errors, setErrors] = useState<LoginErrors>({});
 
   useEffect(() => {
     if (member) navigate({ to: "/dashboard", replace: true });
@@ -40,7 +41,7 @@ function LoginPage() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const next: typeof errors = {};
+    const next: LoginErrors = {};
     if (!email.trim()) next.email = "Email is required.";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
       next.email = "Enter a valid email address.";

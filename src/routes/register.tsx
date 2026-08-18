@@ -38,7 +38,8 @@ function RegisterPage() {
     password: "",
     confirm: "",
   });
-  const [errors, setErrors] = useState<Partial<Fields>>({});
+  type FieldErrors = { [K in keyof Fields]?: string | undefined };
+  const [errors, setErrors] = useState<FieldErrors>({});
 
   const set = (key: keyof Fields) => (value: string) => {
     setFields((prev) => ({ ...prev, [key]: value }));
@@ -47,7 +48,7 @@ function RegisterPage() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const next: Partial<Fields> = {};
+    const next: FieldErrors = {};
     if (!fields.name.trim()) next.name = "Full name is required.";
     if (!fields.email.trim()) next.email = "Email is required.";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email.trim()))

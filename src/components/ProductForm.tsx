@@ -30,6 +30,8 @@ type FormState = {
   notes: string;
 };
 
+type FormErrors = { [K in keyof FormState]?: string | undefined };
+
 const emptyForm: FormState = {
   name: "",
   sku: "",
@@ -43,7 +45,7 @@ const emptyForm: FormState = {
   notes: "",
 };
 
-function FieldError({ message }: { message?: string }) {
+function FieldError({ message }: { message?: string | undefined }) {
   if (!message) return null;
   return (
     <p role="alert" className="text-xs font-medium text-destructive">
@@ -83,7 +85,7 @@ export function ProductForm({
         }
       : emptyForm,
   );
-  const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const set = (key: keyof FormState) => (value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -103,7 +105,7 @@ export function ProductForm({
   const margin = profitMargin(numbers.sellingPrice, numbers.buyCost, numbers.fees);
 
   const validate = () => {
-    const next: Partial<Record<keyof FormState, string>> = {};
+    const next: FormErrors = {};
     if (!form.name.trim()) next.name = "Product name is required.";
     if (!form.sku.trim()) next.sku = "SKU is required.";
     if (!form.asin.trim()) next.asin = "ASIN is required.";

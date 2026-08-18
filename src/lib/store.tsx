@@ -19,7 +19,7 @@ type StoreValue = {
   products: Product[];
   suppliers: Supplier[];
   login: (email: string, password: string) => { ok: boolean; error?: string };
-  register: (member: Member) => void;
+  register: (member: Member & { password?: string | undefined }) => void;
   logout: () => void;
   addProduct: (draft: ProductDraft) => Product;
   updateProduct: (id: string, draft: ProductDraft) => void;
@@ -41,7 +41,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [member, setMember] = useState<Member | null>(null);
   const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
   const [suppliers, setSuppliers] = useState<Supplier[]>(MOCK_SUPPLIERS);
-  const [registered, setRegistered] = useState<Array<Member & { password?: string }>>([]);
+  const [registered, setRegistered] = useState<Array<Member & { password?: string | undefined }>>([]);
 
   const login = useCallback<StoreValue["login"]>(
     (email, password) => {
@@ -60,7 +60,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [registered],
   );
 
-  const register = useCallback((next: Member & { password?: string }) => {
+  const register = useCallback((next: Member & { password?: string | undefined }) => {
     setRegistered((prev) => [...prev, next]);
   }, []);
 
