@@ -134,9 +134,8 @@ function ProductsPage() {
           </DropdownMenuItem>
         ))}
         <DropdownMenuItem
-          variant="destructive"
           onClick={() => setPendingDelete(id)}
-          className="mt-1"
+          className="mt-1 text-destructive focus:text-destructive"
         >
           <Trash2 className="size-4" /> Delete
         </DropdownMenuItem>
