@@ -107,7 +107,7 @@ export function AppLayout({
         </div>
         <NavLinks />
         <div className="mt-auto rounded-xl bg-sidebar-accent p-3 text-xs text-sidebar-accent-foreground/80">
-          Prototype workspace — mock data resets on refresh.
+          Signed in with Supabase — product data is mock and resets on refresh.
         </div>
       </aside>
 
@@ -140,14 +140,14 @@ export function AppLayout({
                   <span className="flex size-7 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
                     {initials}
                   </span>
-                  <span className="hidden text-sm font-medium sm:inline">{member.name}</span>
+                  <span className="hidden text-sm font-medium sm:inline">{displayName}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>
-                  <span className="block text-sm font-semibold">{member.name}</span>
+                  <span className="block text-sm font-semibold">{displayName}</span>
                   <span className="block text-xs font-normal text-muted-foreground">
-                    {member.email}
+                    {user.email}
                   </span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -155,7 +155,7 @@ export function AppLayout({
                   <User className="size-4" /> Member profile
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="size-4" /> Logout
+                  <LogOut className="size-4" /> Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
