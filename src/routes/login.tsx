@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useStore } from "@/lib/store";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -28,18 +28,23 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginPage() {
-  const { login, member } = useStore();
+  const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  type LoginErrors = { email?: string | undefined; password?: string | undefined; form?: string | undefined };
+  const [submitting, setSubmitting] = useState(false);
+  type LoginErrors = {
+    email?: string | undefined;
+    password?: string | undefined;
+    form?: string | undefined;
+  };
   const [errors, setErrors] = useState<LoginErrors>({});
 
   useEffect(() => {
-    if (member) navigate({ to: "/dashboard", replace: true });
-  }, [member, navigate]);
+    if (user) navigate({ to: "/dashboard", replace: true });
+  }, [user, navigate]);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const next: LoginErrors = {};
     if (!email.trim()) next.email = "Email is required.";
@@ -49,13 +54,15 @@ function LoginPage() {
     setErrors(next);
     if (Object.keys(next).length) return;
 
-    const result = login(email, password);
+    setSubmitting(true);
+    const result = await signIn(email, password);
+    setSubmitting(false);
     if (!result.ok) {
-      setErrors({ form: result.error });
+      setErrors({ form: result.error ?? "Could not sign you in." });
       return;
     }
     toast.success("Welcome back to ProfitScout.");
-    navigate({ to: "/dashboard" });
+    navigate({ to: "/dashboard", replace: true });
   };
 
   return (
@@ -98,7 +105,7 @@ function LoginPage() {
                   setEmail(e.target.value);
                   setErrors((p) => ({ ...p, email: undefined, form: undefined }));
                 }}
-                placeholder="demo@profitscout.com"
+                placeholder="you@company.com"
                 aria-invalid={!!errors.email}
               />
               {errors.email ? (
@@ -119,7 +126,7 @@ function LoginPage() {
                   setPassword(e.target.value);
                   setErrors((p) => ({ ...p, password: undefined, form: undefined }));
                 }}
-                placeholder="demo123"
+                placeholder="••••••••"
                 aria-invalid={!!errors.password}
               />
               {errors.password ? (
@@ -129,8 +136,8 @@ function LoginPage() {
               ) : null}
             </div>
 
-            <Button type="submit" className="w-full">
-              Login
+            <Button type="submit" className="w-full" disabled={submitting}>
+              {submitting ? "Signing in…" : "Login"}
             </Button>
           </form>
 
@@ -140,11 +147,6 @@ function LoginPage() {
               Register New Member
             </Link>
           </p>
-
-          <div className="mt-5 rounded-lg bg-muted p-3 text-xs text-muted-foreground">
-            Demo access — email <span className="font-semibold">demo@profitscout.com</span>, password{" "}
-            <span className="font-semibold">demo123</span>
-          </div>
         </div>
       </div>
     </div>

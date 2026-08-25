@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { useStore } from "@/lib/store";
+import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -75,26 +75,26 @@ export function AppLayout({
   actions?: ReactNode;
   children: ReactNode;
 }) {
-  const { member, logout } = useStore();
+  const { user, displayName, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    if (!member) navigate({ to: "/login", replace: true });
-  }, [member, navigate]);
+    if (!loading && !user) navigate({ to: "/login", replace: true });
+  }, [loading, user, navigate]);
 
-  if (!member) return null;
+  if (!user) return null;
 
-  const initials = member.name
+  const initials = displayName
     .split(" ")
     .map((p) => p[0])
     .join("")
     .slice(0, 2)
     .toUpperCase();
 
-  const handleLogout = () => {
-    logout();
-    toast.success("You have been logged out.");
+  const handleLogout = async () => {
+    await signOut();
+    toast.success("You have been signed out.");
     navigate({ to: "/login", replace: true });
   };
 
@@ -107,7 +107,7 @@ export function AppLayout({
         </div>
         <NavLinks />
         <div className="mt-auto rounded-xl bg-sidebar-accent p-3 text-xs text-sidebar-accent-foreground/80">
-          Prototype workspace — mock data resets on refresh.
+          Signed in with Supabase — product data is mock and resets on refresh.
         </div>
       </aside>
 
@@ -140,14 +140,14 @@ export function AppLayout({
                   <span className="flex size-7 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
                     {initials}
                   </span>
-                  <span className="hidden text-sm font-medium sm:inline">{member.name}</span>
+                  <span className="hidden text-sm font-medium sm:inline">{displayName}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>
-                  <span className="block text-sm font-semibold">{member.name}</span>
+                  <span className="block text-sm font-semibold">{displayName}</span>
                   <span className="block text-xs font-normal text-muted-foreground">
-                    {member.email}
+                    {user.email}
                   </span>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -155,7 +155,7 @@ export function AppLayout({
                   <User className="size-4" /> Member profile
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="size-4" /> Logout
+                  <LogOut className="size-4" /> Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
