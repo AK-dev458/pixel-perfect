@@ -75,26 +75,26 @@ export function AppLayout({
   actions?: ReactNode;
   children: ReactNode;
 }) {
-  const { member, logout } = useStore();
+  const { user, displayName, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    if (!member) navigate({ to: "/login", replace: true });
-  }, [member, navigate]);
+    if (!loading && !user) navigate({ to: "/login", replace: true });
+  }, [loading, user, navigate]);
 
-  if (!member) return null;
+  if (!user) return null;
 
-  const initials = member.name
+  const initials = displayName
     .split(" ")
     .map((p) => p[0])
     .join("")
     .slice(0, 2)
     .toUpperCase();
 
-  const handleLogout = () => {
-    logout();
-    toast.success("You have been logged out.");
+  const handleLogout = async () => {
+    await signOut();
+    toast.success("You have been signed out.");
     navigate({ to: "/login", replace: true });
   };
 
