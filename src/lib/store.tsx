@@ -31,34 +31,8 @@ const StoreContext = createContext<StoreValue | null>(null);
 const newId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [member, setMember] = useState<Member | null>(null);
   const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
   const [suppliers, setSuppliers] = useState<Supplier[]>(MOCK_SUPPLIERS);
-  const [registered, setRegistered] = useState<Array<Member & { password?: string | undefined }>>([]);
-
-  const login = useCallback<StoreValue["login"]>(
-    (email, password) => {
-      const normalized = email.trim().toLowerCase();
-      if (normalized === DEMO_CREDENTIALS.email && password === DEMO_CREDENTIALS.password) {
-        setMember({ name: DEMO_CREDENTIALS.name, email: DEMO_CREDENTIALS.email });
-        return { ok: true };
-      }
-      const found = registered.find((m) => m.email.toLowerCase() === normalized);
-      if (found && found.password === password) {
-        setMember({ name: found.name, email: found.email });
-        return { ok: true };
-      }
-      return { ok: false, error: "Invalid email or password. Try demo@profitscout.com / demo123." };
-    },
-    [registered],
-  );
-
-  const register = useCallback((next: Member & { password?: string | undefined }) => {
-    setRegistered((prev) => [...prev, next]);
-  }, []);
-
-  const logout = useCallback(() => setMember(null), []);
-
   const addProduct = useCallback<StoreValue["addProduct"]>((draft) => {
     const product: Product = {
       ...draft,
