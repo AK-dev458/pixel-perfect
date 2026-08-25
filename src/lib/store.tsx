@@ -1,7 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 
 import {
-  DEMO_CREDENTIALS,
   MOCK_PRODUCTS,
   MOCK_SUPPLIERS,
   type Product,
@@ -9,18 +8,12 @@ import {
   type Supplier,
 } from "./mock-data";
 
-export type Member = { name: string; email: string };
-
 export type ProductDraft = Omit<Product, "id" | "status" | "createdAt">;
 export type SupplierDraft = Omit<Supplier, "id">;
 
 type StoreValue = {
-  member: Member | null;
   products: Product[];
   suppliers: Supplier[];
-  login: (email: string, password: string) => { ok: boolean; error?: string };
-  register: (member: Member & { password?: string | undefined }) => void;
-  logout: () => void;
   addProduct: (draft: ProductDraft) => Product;
   updateProduct: (id: string, draft: ProductDraft) => void;
   setProductStatus: (id: string, status: ProductStatus) => void;
