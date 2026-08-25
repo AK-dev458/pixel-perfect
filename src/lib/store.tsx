@@ -33,6 +33,7 @@ const newId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
   const [suppliers, setSuppliers] = useState<Supplier[]>(MOCK_SUPPLIERS);
+
   const addProduct = useCallback<StoreValue["addProduct"]>((draft) => {
     const product: Product = {
       ...draft,
@@ -68,12 +69,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<StoreValue>(
     () => ({
-      member,
       products,
       suppliers,
-      login,
-      register,
-      logout,
       addProduct,
       updateProduct,
       setProductStatus,
@@ -86,12 +83,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       productCountForSupplier: (id) => products.filter((p) => p.supplierId === id).length,
     }),
     [
-      member,
       products,
       suppliers,
-      login,
-      register,
-      logout,
       addProduct,
       updateProduct,
       setProductStatus,
